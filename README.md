@@ -17,4 +17,4 @@ k.gish@zarafa.com
 
 ## Thanks
 
-A special thanks to Jelle van der Waai, Mark Dufour and the kind folks at ember.js for helping me out alot.
+A special thanks to Jelle van der Waa, Mark Dufour and the kind folks at ember.js for helping me out alot.
