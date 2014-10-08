@@ -169,7 +169,7 @@ def item(folderid, itemid):
         item = folder.item(itemid)
     except:
         return jsonify({'error': 'Item does not exist'})
-    return jsonify({
+    itemobj = {
         'id': item.entryid,
         'subject' : item.subject,
         'received': str(item.received),
@@ -182,7 +182,8 @@ def item(folderid, itemid):
 #        'headers': item.headers().items(),
         'html': item.body.html,
         'text': item.body.text
-    })
+    }
+    return jsonify({ 'item' : itemobj })
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
