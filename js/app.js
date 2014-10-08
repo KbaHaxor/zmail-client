@@ -15,7 +15,7 @@ App.Router.map(function() {
     });
 });
 
-App.FolderRoute = Ember.Route.extend({
+App.FoldersFolderRoute = Ember.Route.extend({
     model: function(folder) {
         return this.store.find('folder', folder.folder_id);
     }
@@ -55,8 +55,8 @@ App.Item = DS.Model.extend({
 
 /** REST ADAPTER **/
 DS.RESTAdapter.reopen({
-//    host: 'http://192.168.50.11:5000',
-    host: 'http://192.168.2.17:5000',
+    host: 'http://192.168.50.11:5000',
+//    host: 'http://192.168.2.17:5000',
     headers: {
         "Authorization": (function() {
             return "Basic " + Base64.encode('demo1:test');
