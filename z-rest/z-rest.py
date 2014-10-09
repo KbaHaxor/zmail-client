@@ -157,7 +157,7 @@ def folder(foldername):
         itemlist.append({'id': item.entryid, 'subject': item.subject})
     return jsonify({'items': itemlist})
 
-@app.route('/folders/<string:folderid>/item/<string:itemid>', methods=['GET', 'OPTIONS'])
+@app.route('/folders/<string:folderid>/items/<string:itemid>', methods=['GET', 'OPTIONS'])
 @requires_auth
 @crossdomain(origin='*')
 def item(folderid, itemid):
