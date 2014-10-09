@@ -136,12 +136,17 @@ def get_flag(item):
 def folders():
     folderlist = []
     for folder in user.store.folders():
-        folderlist.append({'id': folder.entryid, 'name': folder.name, 'count': folder.count})
-    return jsonify({'folders' : folderlist})
+        folderlist.append({
+            'id': folder.entryid,
+            'name': folder.name,
+            'count': folder.count,
+            'links': {'items': '/folder/'+folder.entryid+'/items'}
+        })
+    return jsonify({'folders': folderlist})
     # TODO: hierachy
     # return jsonify({folder.name: folder.entryid for folder in user.store.folders()})
 
-@app.route('/folders/<string:foldername>', methods=['GET', 'OPTIONS'])
+@app.route('/folder/<string:foldername>/items', methods=['GET', 'OPTIONS'])
 @crossdomain(origin='*')
 @requires_auth
 def folder(foldername):
@@ -154,10 +159,15 @@ def folder(foldername):
     except zarafa.ZarafaException:
         return jsonify({'error': 'Folder does not exist'})
     for item in folder.items():
-        itemlist.append({'id': item.entryid, 'subject': item.subject})
+        itemlist.append({
+            'id': item.entryid,
+            'subject': item.subject,
+            'received': str(item.received),
+            'links': {'item': '/folder/'+folder.entryid+'/item/'+item.entryid}
+        })
     return jsonify({'items': itemlist})
 
-@app.route('/folders/<string:folderid>/items/<string:itemid>', methods=['GET', 'OPTIONS'])
+@app.route('/folder/<string:folderid>/item/<string:itemid>', methods=['GET', 'OPTIONS'])
 @requires_auth
 @crossdomain(origin='*')
 def item(folderid, itemid):
@@ -171,7 +181,7 @@ def item(folderid, itemid):
         return jsonify({'error': 'Item does not exist'})
     itemobj = {
         'id': item.entryid,
-        'subject' : item.subject,
+        'subject': item.subject,
         'received': str(item.received),
         'sent': item.prop(PR_CLIENT_SUBMIT_TIME).strval(),
         'size': item.prop(PR_MESSAGE_SIZE).value, # Kb?

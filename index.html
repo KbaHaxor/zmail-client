@@ -30,11 +30,9 @@
                 <h1>Folders</h1>
                 <div class="list-group">
                     {{#each folder in controller}}
-                        {{#if folder.isLoaded}}
-                            {{#link-to "folder" folder class="list-group-item"}}
-                                {{folder.name}} ({{folder.count}})
-                            {{/link-to}}
-                        {{/if}}
+                        {{#link-to "folder" folder class="list-group-item"}}
+                            {{folder.name}} ({{folder.count}})
+                        {{/link-to}}
                     {{/each}}
                 </div>
           </div>
@@ -51,11 +49,35 @@
             <div class="col-md-6">
                 <div class="list-group">
                     {{#each item in items}}
-                        <div class="list-group-item">{{item.subject}}</div>
+                        {{#link-to "item" item class="list-group-item"}}
+                            <strong>[{{item.received}}]</strong> {{item.subject}}
+                        {{/link-to}}
                     {{/each}}
                 </div>
             </div>
-            <div class="col-md-6"></div>
+            <div class="col-md-6">
+                {{outlet}}
+            </div>
+        </div>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="item">
+        <h1>{{subject}}</h1>
+        <div class="row">
+            <div class="list-group-item">
+                [Contents]
+                    <!--
+                    sent: {{sent}}<br/>
+                    size: {{size}}<br>
+                    importance: {{importance}}<br />
+                    flags: {{flags}}<br/>
+                    sender: []
+                    recipients: []
+                    headers: []
+                    text: ''
+                    body: {html}
+                    -->
+            </div>
         </div>
     </script>
 

@@ -9,21 +9,21 @@ App = Ember.Application.create({
 /** ROUTER **/
 App.Router.map(function() {
     this.resource('folders', {path: "/"}, function() {
-        this.resource('folder', {path: "/folders/:folder_id"}, function() {
-
-        })
+        this.resource('folder', {path: "folders/:folder_id"}, function() {
+            this.resource('item', {path: "item/:item_id"});
+        });
     });
-});
-
-App.FoldersFolderRoute = Ember.Route.extend({
-    model: function(folder) {
-        return this.store.find('folder', folder.folder_id);
-    }
 });
 
 App.FoldersRoute = Ember.Route.extend({
     model: function() {
         return this.store.find('folder');
+    }
+});
+
+App.FolderRoute = Ember.Route.extend({
+    model: function(folder) {
+        return this.store.find('folder', folder.folder_id);
     }
 });
 
@@ -33,13 +33,25 @@ App.FoldersController = Ember.ArrayController.extend({
     sortProperties: ['name']
 });
 
+App.ItemController = Ember.ArrayController.extend({
+    sortAscending: true,
+    sortProperties: ['received']
+});
+
 /** MODELS **/
 App.Folder = DS.Model.extend({
     name: DS.attr('string'),
-    count: DS.attr('number')
+    count: DS.attr('number'),
+    items: DS.hasMany('item', {async: true})
 });
 
 App.Item = DS.Model.extend({
+    subject: DS.attr('string'),
+    received: DS.attr('string'),
+//    item: DS.hasMany('xxxx', {async: true})
+});
+
+App.Xxxx = DS.Model.extend({
     subject: DS.attr('string'),
     received: DS.attr('string'),
     sent: DS.attr('string'),
@@ -55,8 +67,8 @@ App.Item = DS.Model.extend({
 
 /** REST ADAPTER **/
 DS.RESTAdapter.reopen({
-    host: 'http://192.168.50.11:5000',
-//    host: 'http://192.168.2.17:5000',
+//    host: 'http://192.168.50.11:5000',
+    host: 'http://192.168.2.17:5000',
     headers: {
         "Authorization": (function() {
             return "Basic " + Base64.encode('demo1:test');
