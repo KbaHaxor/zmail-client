@@ -6,7 +6,7 @@ Assuming that the remote server is located at http://192.168.50.11:5000/.
 
 ## Receive a list of folders
 
-    curl "http://192.168.50.11:5000/folders/" --user demo1:test
+    curl "http://192.168.50.11:5000/folders" --user demo1:test
     {
       "folders": [
         {
