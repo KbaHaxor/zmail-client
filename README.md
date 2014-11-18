@@ -1,6 +1,6 @@
 # ZMail-Client
 
-Ths is a Simple Mail Client for Zarafa built using [ember.js](http://www.emberjs.com) and [python-zarafa](https://github.com/zarafagroupware/python-zarafa).
+This is a Simple Mail Client for Zarafa built using [ember.js](http://www.emberjs.com) and [python-zarafa](https://github.com/zarafagroupware/python-zarafa).
 
 ## Instructions
 
@@ -12,8 +12,7 @@ $ python z-rest.py
 
 ## Author
 
-Kiffin Gish
-k.gish@zarafa.com
+You can contact me here: Kiffin Gish <k.gish@zarafa.com>
 
 ## Thanks
 
