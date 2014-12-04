@@ -10,11 +10,13 @@ Makes use of an elegant RESTful Web API and [Flask](http://flask.pocoo.org/) to 
 
 In short, the REST requests are quite simple.
 
-  GET /folders => list of folders
-  GET /folders/:folder_id/items => list of items for a given folder
-  GET /folders/:folder_id/items/:item_id => list of properties for a given item for a given folder
+```
+GET /folders => list of folders
+GET /folders/:folder_id/items => list of items for a given folder
+GET /folders/:folder_id/items/:item_id => list of properties for a given item for a given folder
+```
 
-For more information, check out [Z-REST Readme](z-rest/README-REST.md).
+For more information, check out the [Z-REST Readme](z-rest/README-REST.md).
 
 ## Instructions
 
