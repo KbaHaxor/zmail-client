@@ -1,6 +1,20 @@
 # ZMail-Client
 
-This is a Simple Mail Client for Zarafa built using [ember.js](http://www.emberjs.com) and [python-zarafa](https://github.com/zarafagroupware/python-zarafa).
+This is a Simple Mail Client for Zarafa built using [Ember.js](http://www.emberjs.com) and [python-zarafa](https://github.com/zarafagroupware/python-zarafa).
+
+Makes use of an elegant RESTful Web API and [Flask](http://flask.pocoo.org/) to expose the functionalities to list and view folders, items and properties.
+
+![](images/screenshot.png?raw=true)
+
+## RESTful Web API
+
+In short, the REST requests are quite simple.
+
+  GET /folders => list of folders
+  GET /folders/:folder_id/items => list of items for a given folder
+  GET /folders/:folder_id/items/:item_id => list of properties for a given item for a given folder
+
+For more information, check out [Z-REST Readme](z-rest/README-REST.md).
 
 ## Instructions
 
