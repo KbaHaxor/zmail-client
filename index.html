@@ -13,6 +13,7 @@
     <script src="js/libs/ember-data-1.0-beta-11.js"></script>
 
     <script src="js/libs/base64.js"></script>
+    <script src="js/config.js"></script>
     <script src="js/app.js"></script>
 
     <script type="text/x-handlebars" data-template-name="application">
@@ -53,9 +54,9 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="list-group">
-                    {{#each}}
-                        {{#link-to 'item' id class="list-group-item"}}
-                            {{received}} {{subject}}
+                    {{#each item in controller}}
+                        {{#link-to 'item' item class="list-group-item"}}
+                            {{item.received}} | {{item.subject}}
                         {{/link-to}}
                     {{/each}}
                 </div>
@@ -67,11 +68,11 @@
     </script>
 
     <script type="text/x-handlebars" data-template-name="item">
-        <h1>{{subject}}</h1>
+        <h1>Subject: {{this}}</h1>
         <div class="row">
             <!--<div class="col-md-6">-->
                 <div class="list-group">
-                    <div class="list-group-item">{{body}}</div>
+                    <div class="list-group-item">Body: {{body}}</div>
                 </div>
             <!--</div>-->
         </div>

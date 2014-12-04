@@ -1,9 +1,16 @@
-App = Ember.Application.create({
+var App = Ember.Application.create({
     LOG_TRANSITIONS: true,
     LOG_TRANSITIONS_INTERNAL: true,
     LOG_VIEW_LOOKUPS: true,
     LOG_ACTIVE_GENERATION: true,
-    LOG_RESOLVER: true
+    LOG_RESOLVER: true,
+
+    ready: function() {
+        console.log('Application is ready');
+        this.set('config', config);
+        this.set('config.hash', Base64.encode(this.get('config.user') + ':' + this.get('config.passwd')));
+        console.log(this.get('config.hash'));
+    }
 });
 
 App.Router.map(function() {
@@ -62,11 +69,51 @@ App.ItemsRoute = Ember.Route.extend({
 // TODO: change detail to details in z-rest.py
 
 App.ItemRoute = Ember.Route.extend({
-    model: function(params) {
-        console.log('ItemRoute: model(item_id='+params.item_id+') => ');
-        var res = this.modelFor('items').findBy('id', params.item_id);
-        console.log(res);
-        return res;
+    model: function() {
+        console.log('ItemRoute: model()');
+        return this._super();
+    },
+    beforeModel: function() {
+        console.log('ItemRoute: beforeModel()');
+        return this._super();
+    },
+    afterModel: function() {
+        console.log('ItemRoute: afterModel()');
+        return this._super();
+    },
+    deserialize: function(params, transition) {
+        console.log('ItemRoute: deserialize()');
+        console.log('  params =>');
+        console.log(params);
+        console.log('  transition =>');
+        console.log(transition);
+        return this.model(this.paramsFor(this.routeName), transition);
+    },
+    actions: {
+        loading: function(transition, route) {
+            console.log('ItemRoute: loading()');
+            console.log('  transition =>');
+            console.log(transition);
+            console.log('  route =>');
+            console.log(route);
+            return this._super(transition, route);
+        },
+        willTransition: function(transition) {
+            console.log('ItemRoute: willTransiton()');
+            console.log('  transition =>');
+            console.log(transition);
+            return this._super(transition);
+        },
+        didTransition: function() {
+            console.log('ItemRoute: didTransiton()');
+            return this._super();
+        },
+        error: function(error, transition) {
+            console.log('ItemRoute: error(' + error.message + ')');
+            console.log('  transition =>');
+            console.log(transition);
+            return this._super(error, transition);
+        }
     }
 });
 
@@ -115,11 +162,11 @@ App.Detail = DS.Model.extend({
 
 /** REST ADAPTER **/
 DS.RESTAdapter.reopen({
-    host: 'http://192.168.50.12:5000',
-    headers: { "Authorization":  "Basic ZGVtbzE6dGVzdA==" }
+    host: 'http://0.0.0.0:5000',
+//    headers: { "Authorization": "Basic dW5kZWZpbmVkOnVuZGVmaW5lZA==" }
 });
 
-App.Store = DS.Store.extend({
+App.ApplicationStore = DS.Store.extend({
     adapter: "App.Adapter"
 });
 

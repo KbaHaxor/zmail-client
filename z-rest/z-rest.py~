@@ -14,8 +14,7 @@ from flask import Flask, jsonify, request, Response, make_response, current_app
 app = Flask(__name__)
 # TODO: auth with username/password
 server = zarafa.Server()
-username = "kiffing"
-user = server.user(username)
+user = ""
 
 def crossdomain(origin=None, methods=None, headers=None,
                 max_age=21600, attach_to_all=True,
@@ -65,9 +64,7 @@ def check_auth(username, password):
     password combination is valid.
     """
     global user # TODO: this is ugly
-    print "username=" + username
-    print "password=" + password
-    if password == '':
+    if password == 'test':
         try:
             user = server.user(username)
         except zarafa.ZarafaException:
@@ -78,10 +75,10 @@ def check_auth(username, password):
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-#        auth = request.authorization
-#        if not auth or not check_auth(auth.username, auth.password):
-#            print "here"
-#            return authenticate()
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            print "here"
+            return authenticate()
         return f(*args, **kwargs)
     return decorated
 
@@ -161,17 +158,13 @@ def folder(foldername):
         folder = user.store.folder(foldername)
     except zarafa.ZarafaException:
         return jsonify({'error': 'Folder does not exist'})
-    x = 0
     for item in folder.items():
-        if x == 5:
-            break
         itemlist.append({
             'id': item.entryid,
             'subject': item.subject,
             'received': str(item.received),
             'links': {'item': '/folder/'+folder.entryid+'/item/'+item.entryid}
         })
-        x = x + 1
     return jsonify({'items': itemlist})
 
 @app.route('/folder/<string:folderid>/item/<string:itemid>', methods=['GET', 'OPTIONS'])
