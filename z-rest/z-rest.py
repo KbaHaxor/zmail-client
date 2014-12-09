@@ -3,6 +3,8 @@
 from functools import wraps, update_wrapper
 from datetime import timedelta
 
+import re
+
 # Zarafa-specific
 import zarafa
 from MAPI.Tags import *
@@ -186,21 +188,36 @@ def item(folderid, itemid):
         item = folder.item(itemid)
     except:
         return jsonify({'error': 'Item does not exist'})
-    itemobj = {
-        'id': item.entryid,
-        'subject': item.subject,
-        'received': str(item.received),
-        'sent': item.prop(PR_CLIENT_SUBMIT_TIME).strval(),
-        'size': item.prop(PR_MESSAGE_SIZE).value, # Kb?
-        'importance': get_importance(item),
-        'flags': get_flag(item),
-#        'sender': get_adddresslist(item.sender),
-#        'recipients': [get_adddresslist(recip) for recip in item.recipients()],
-#        'headers': item.headers().items(),
-        'html': item.body.html,
-        'text': item.body.text
-    }
-    return jsonify({ 'item' : itemobj })
+
+    proplist = []
+    for prop in item.props():
+        res = prop.__unicode__()
+        match = re.search('Property\(([^,]*), (.*)\)$', res)
+        name = match.group(1)
+        value = match.group(2)
+        match = re.search('u\'(.*)\'$', value)
+        if match:
+            value = match.group(1)
+        proplist.append({
+            'name': name,
+            'value': value
+        })
+    return jsonify({ 'props' : proplist })
+#    itemobj = {
+#        'id': item.entryid,
+#        'subject': item.subject,
+#        'received': str(item.received),
+#        'sent': item.prop(PR_CLIENT_SUBMIT_TIME).strval(),
+#        'size': item.prop(PR_MESSAGE_SIZE).value, # Kb?
+#        'importance': get_importance(item),
+#        'flags': get_flag(item),
+##        'sender': get_adddresslist(item.sender),
+##        'recipients': [get_adddresslist(recip) for recip in item.recipients()],
+##        'headers': item.headers().items(),
+#        'html': item.body.html,
+#        'text': item.body.text
+#    }
+#    return jsonify({ 'item' : itemobj })
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
