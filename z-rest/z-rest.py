@@ -169,9 +169,12 @@ def folder(foldername):
             break
         itemlist.append({
             'id': item.entryid,
-            'subject': item.subject,
-            'received': str(item.received),
-            'links': {'item': '/folder/'+folder.entryid+'/item/'+item.entryid}
+            'name': item.subject,
+            'folder': folder.entryid,
+            'count': len(item.props()),
+#            'subject': item.subject,
+#            'received': str(item.received),
+            'links': {'keys': '/folder/'+folder.entryid+'/item/'+item.entryid}
         })
         x = x + 1
     return jsonify({'items': itemlist})
@@ -189,20 +192,32 @@ def item(folderid, itemid):
     except:
         return jsonify({'error': 'Item does not exist'})
 
+    #print [hex(prop.proptag), prop.idname or prop.name,  prop.strval().decode('utf-8')]
+
     proplist = []
     for prop in item.props():
-        res = prop.__unicode__()
-        match = re.search('Property\(([^,]*), (.*)\)$', res)
-        name = match.group(1)
-        value = match.group(2)
-        match = re.search('u\'(.*)\'$', value)
-        if match:
-            value = match.group(1)
+#        name = prop.idname or prop.name
+#        value = prop.strval().decode('utf-8')
+#        if name and value and re.match('^PR_', name):
         proplist.append({
-            'name': name,
-            'value': value
+            'id': prop.proptag,
+            'name': prop.idname or prop.name,
+            'value': prop.strval().decode('utf-8')
         })
-    return jsonify({ 'props' : proplist })
+    return jsonify({ 'keys' : proplist })
+#        res = prop.__unicode__()
+#        match = re.search('Property\(([^,]*), (.*)\)$', res)
+#        name = match.group(1)
+#        value = match.group(2)
+#        match = re.search('u\'(.*)\'$', value)
+#        if match:
+#            value = match.group(1)
+#        proplist.append({
+#            'id': prop.proptag,
+#            'name': name,
+#            'value': value
+#        })
+
 #    itemobj = {
 #        'id': item.entryid,
 #        'subject': item.subject,
@@ -220,4 +235,4 @@ def item(folderid, itemid):
 #    return jsonify({ 'item' : itemobj })
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0',threaded=True,debug=False)

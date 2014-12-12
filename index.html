@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <title>Simple Zarafa Email Client</title>
+    <title>ZMail :: Simple Email Client</title>
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/main.css">
 
@@ -31,10 +31,11 @@
                 <h1>Folders :: {{length}}</h1>
                 <div class="list-group">
                     {{#each}}
-                        {{#link-to 'items' id class="list-group-item"}}
-                            <span class="badge">{{count}}</span>
-                            {{name}}
+                        {{#link-to 'folder' this class="list-group-item"}}
+                            {{name}} <span class="badge">{{count}}</span>
                         {{/link-to}}
+                    {{else}}
+                        <li class="list-group-item">No folders</li>
                     {{/each}}
                 </div>
             </div>
@@ -45,36 +46,42 @@
         </div>
     </script>
 
-    <script type="text/x-handlebars" data-template-name="folder">
-        <h1>{{name}} :: {{#if count}}{{count}}{{else}}empty{{/if}}</h1>
-        {{outlet}}
-    </script>
-
     <script type="text/x-handlebars" data-template-name="items">
         <div class="row">
             <div class="col-md-6">
+            <h3>Items :: {{length}}</h3>
                 <div class="list-group">
-                    {{#each item in controller}}
-                        {{#link-to 'item' item class="list-group-item"}}
-                            {{item.received}} | {{item.subject}}
+                    {{#each}}
+                        {{#link-to 'item' this class="list-group-item"}}
+                            {{name}} <span class="badge">{{count}}</span>
                         {{/link-to}}
+                    {{else}}
+                        <li class="list-group-item">No items</li>
                     {{/each}}
                 </div>
             </div>
+
             <div class="col-md-6">
                 {{outlet}}
             </div>
         </div>
     </script>
 
-    <script type="text/x-handlebars" data-template-name="item">
-        <h1>Subject: {{this}}</h1>
+    <script type="text/x-handlebars" data-template-name="keys">
         <div class="row">
-            <!--<div class="col-md-6">-->
+            <div class="col-md-12">
+                <h3>Keys :: {{length}}</h3>
                 <div class="list-group">
-                    <div class="list-group-item">Body: {{body}}</div>
+                    {{#if length}}
+                        {{#each}}
+                            <li class="list-group-item keys-header">{{formatvalue name maxlen=50}}</li>
+                            <li class="list-group-item">{{formatvalue value maxlen=50}}</li>
+                        {{/each}}
+                    {{else}}
+                        <li class="list-group-item">No keys</li>
+                    {{/if}}
                 </div>
-            <!--</div>-->
+            </div>
         </div>
     </script>
 
