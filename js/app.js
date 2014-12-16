@@ -44,6 +44,7 @@ App.FoldersRoute = Ember.Route.extend({
 App.FoldersIndexRoute = Ember.Route.extend({
     afterModel: function() {
         var firstObject = this.modelFor('folders').get('firstObject');
+//        var firstObject = this.controllerFor('folders').get('arrangedContent.firstObject');
         if (firstObject) {
             console.log('FoldersIndexRoute: afterModel => folder/firstObject');
             this.transitionTo('folder', firstObject);
@@ -104,24 +105,87 @@ App.KeysRoute = Ember.Route.extend({
 /** CONTROLLERS **/
 App.FoldersController = Ember.ArrayController.extend({
     sortAscending: true,
-    sortProperties: ['name']
+    sortProperties: ['name'],
+    itemController: 'folder'
+});
+
+App.FolderController = Ember.ObjectController.extend({
+    glyphicon: function() {
+        var modifier;
+        var name = this.get('name').toLowerCase();
+        var ftype = this.get('ftype').toLowerCase();
+        console.log('FolderController: glyphicon() name='+name+',ftype='+ftype);
+        if (ftype === 'none') {
+            switch(name) {
+                case 'inbox':
+                    modifier = 'inbox';
+                    break;
+                case 'deleted items':
+                    modifier = 'trash';
+                    break;
+                case 'outbox':
+                    modifier = 'log-out';
+                    break;
+                case 'sent items':
+                    modifier = 'send';
+                    break;
+                default:
+                    modifier = 'question-sign';
+            }
+       } else {
+            ftype = ftype.replace(/^ipf\./, '');
+            switch(ftype) {
+                case 'appointment':
+                    modifier = 'th';
+                    break;
+                case 'deleted items':
+                    modifier = 'trash';
+                    break;
+                case 'contact':
+                    modifier = 'user';
+                    break;
+                case 'task':
+                    modifier = 'th-list';
+                    break;
+                case 'configuration':
+                    modifier = 'cog';
+                    break;
+                case 'note':
+                    modifier = 'tag';
+                    break;
+                case 'note.outlookhomepage':
+                    modifier = 'tag';
+                    break;
+                case 'stickynote':
+                    modifier = 'tags';
+                    break;
+                case 'journal':
+                    modifier = 'book';
+                    break;
+                default:
+                    modifier = 'question-sign';
+            }
+       }
+        return 'glyphicon-'+modifier;
+   }.property('name','ftype')
 });
 
 App.KeysController = Ember.ArrayController.extend({
     sortAscending: true,
-    sortProperties: ['name']
-    //filteredContent: function() {
-    //    var content = this.get('content');
-    //    if (!content) {return content; }
-    //    return content.filter( function(item) {
-    //        return (item.get('name').substr(0,3) === 'PR_');
-    //    });
-    //}.property('content.isLoaded')
+    sortProperties: ['name'],
+    filteredContent: function() {
+        var content = this.get('content');
+        if (!content) { return content; }
+        return content.filter( function(item) {
+            return (item.get('name').substr(0,3) === 'PR_');
+        });
+    }.property('content.isLoaded')
 });
 
 /** MODELS **/
 App.Folder = DS.Model.extend({
     name: DS.attr('string'),
+    ftype: DS.attr('string'),
     count: DS.attr('number'),
     items: DS.hasMany('item', {async: true} )
 });
@@ -153,4 +217,14 @@ Ember.Handlebars.helper('formatvalue', function(value, options) {
     } else {
         return 'null';
     }
+});
+
+Ember.Handlebars.helper('prefixstrip', function(value, options) {
+    var prefix = options.hash.prefix;
+    if (!prefix) {
+        console.log('prefixstrip => prefix missing!');
+        return value;
+    }
+    var re = new RegExp('^'+prefix);
+    return value.replace(re, '');
 });

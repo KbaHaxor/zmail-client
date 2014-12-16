@@ -7,7 +7,7 @@ import re
 
 # Zarafa-specific
 import zarafa
-from MAPI.Tags import *
+from MAPI.Util import *
 
 # Flask
 from flask import Flask, jsonify, request, Response, make_response, current_app
@@ -140,14 +140,27 @@ def get_flag(item):
 @requires_auth
 def folders():
     folderlist = []
+    cnt = 0
     for folder in user.store.folders():
+        cnt = cnt + 1
+        print cnt, folder.name
+        try:
+            container_class = folder.prop(PR_CONTAINER_CLASS).value
+        except MAPIErrorNotFound:
+            container_class = 'None'
+        print container_class
         folderlist.append({
             'id': folder.entryid,
             'name': folder.name,
+            'ftype' : container_class,
             'count': folder.count,
             'links': {'items': '/folder/'+folder.entryid+'/items'}
         })
-    return jsonify({'folders': folderlist})
+        print "after append"
+    print "before jsonify"
+    res = jsonify({'folders': folderlist})
+    print "after jsonify"
+    return res
     # TODO: hierachy
     # return jsonify({folder.name: folder.entryid for folder in user.store.folders()})
 
@@ -165,7 +178,7 @@ def folder(foldername):
         return jsonify({'error': 'Folder does not exist'})
     x = 0
     for item in folder.items():
-        if x == 5:
+        if x == 10:
             break
         itemlist.append({
             'id': item.entryid,
@@ -204,18 +217,6 @@ def item(folderid, itemid):
             'value': prop.strval().decode('utf-8')
         })
     return jsonify({ 'keys' : proplist })
-#        res = prop.__unicode__()
-#        match = re.search('Property\(([^,]*), (.*)\)$', res)
-#        name = match.group(1)
-#        value = match.group(2)
-#        match = re.search('u\'(.*)\'$', value)
-#        if match:
-#            value = match.group(1)
-#        proplist.append({
-#            'id': prop.proptag,
-#            'name': name,
-#            'value': value
-#        })
 
 #    itemobj = {
 #        'id': item.entryid,
@@ -234,4 +235,4 @@ def item(folderid, itemid):
 #    return jsonify({ 'item' : itemobj })
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',threaded=True,debug=False)
+    app.run(host='0.0.0.0',threaded=True,debug=True)

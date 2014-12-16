@@ -31,7 +31,7 @@
                 <div class="list-group">
                     {{#each}}
                         {{#link-to 'folder' this class="list-group-item"}}
-                            {{name}} <span class="badge">{{count}}</span>
+                            <span {{bind-attr title=ftype}} {{bind-attr class=":glyphicon glyphicon"}}></span> {{name}} <span class="badge">{{count}}</span>
                         {{/link-to}}
                     {{else}}
                         <li class="list-group-item">No folders</li>
@@ -72,7 +72,7 @@
                 <h1>Keys :: {{length}}</h1>
                 <div class="list-group">
                     {{#if length}}
-                        {{#each}}
+                        {{#each filteredContent}}
                             <li class="list-group-item keys-header">{{formatvalue name maxlen=50}}</li>
                             <li class="list-group-item">{{formatvalue value maxlen=50}}</li>
                         {{/each}}
