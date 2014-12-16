@@ -196,12 +196,11 @@ def item(folderid, itemid):
 
     proplist = []
     for prop in item.props():
-#        name = prop.idname or prop.name
-#        value = prop.strval().decode('utf-8')
-#        if name and value and re.match('^PR_', name):
+#        if idn and re.match('^PR_', idn):
+        idn = prop.idname or prop.name,
         proplist.append({
             'id': prop.proptag,
-            'name': prop.idname or prop.name,
+            'name': idn,
             'value': prop.strval().decode('utf-8')
         })
     return jsonify({ 'keys' : proplist })

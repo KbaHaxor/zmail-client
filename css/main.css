@@ -46,6 +46,16 @@ h2 {
     padding: 10px;
 }
 
+#headerArea h1 {
+    font-size: 42px;
+    color: black;
+}
+
+#headerArea img {
+    float: left;
+    margin-right: 10px;
+}
+
 #headerArea li a {
     color: #E4F0F5;
     line-height: 55px;

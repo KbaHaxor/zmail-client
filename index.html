@@ -13,12 +13,11 @@
     <script src="js/libs/ember-data-1.0-beta-11.js"></script>
 
     <script src="js/libs/base64.js"></script>
-    <script src="js/config.js"></script>
     <script src="js/app.js"></script>
 
     <script type="text/x-handlebars" data-template-name="application">
         <div id="headerArea">
-            <img src="images/header_logo.png" />
+            <img src="images/zarafa_logo.png" width="65"/><h1>ZMail :: Simple Mail Client</h1>
         </div>
         <div id="mainArea">
             {{outlet}}
@@ -49,7 +48,7 @@
     <script type="text/x-handlebars" data-template-name="items">
         <div class="row">
             <div class="col-md-6">
-            <h3>Items :: {{length}}</h3>
+            <h1>Items :: {{length}}</h1>
                 <div class="list-group">
                     {{#each}}
                         {{#link-to 'item' this class="list-group-item"}}
@@ -70,7 +69,7 @@
     <script type="text/x-handlebars" data-template-name="keys">
         <div class="row">
             <div class="col-md-12">
-                <h3>Keys :: {{length}}</h3>
+                <h1>Keys :: {{length}}</h1>
                 <div class="list-group">
                     {{#if length}}
                         {{#each}}
