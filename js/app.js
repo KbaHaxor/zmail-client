@@ -1,10 +1,12 @@
 App = Ember.Application.create({
-    LOG_TRANSITIONS: false,
-    LOG_TRANSITIONS_INTERNAL: false,
-    LOG_VIEW_LOOKUPS: false,
-    LOG_ACTIVE_GENERATION: false,
-    LOG_RESOLVER: false
+    //LOG_TRANSITIONS: true,
+    //LOG_TRANSITIONS_INTERNAL: true,
+    //LOG_VIEW_LOOKUPS: true,
+    //LOG_ACTIVE_GENERATION: true,
+    //LOG_RESOLVER: true
 });
+
+//Ember.LOG_BINDINGS = true;
 
 /** ADAPTERS **/
 App.ApplicationAdapter = DS.RESTAdapter.extend({});
@@ -114,72 +116,66 @@ App.FolderController = Ember.ObjectController.extend({
         var modifier;
         var name = this.get('name').toLowerCase();
         var ftype = this.get('ftype').toLowerCase();
-        console.log('FolderController: glyphicon() name='+name+',ftype='+ftype);
         if (ftype === 'none') {
             switch(name) {
-                case 'inbox':
-                    modifier = 'inbox';
-                    break;
-                case 'deleted items':
-                    modifier = 'trash';
-                    break;
-                case 'outbox':
-                    modifier = 'log-out';
-                    break;
-                case 'sent items':
-                    modifier = 'send';
-                    break;
-                default:
-                    modifier = 'question-sign';
+                case 'inbox': modifier = 'inbox'; break;
+                case 'deleted items': modifier = 'trash'; break;
+                case 'outbox': modifier = 'log-out'; break;
+                case 'sent items': modifier = 'send'; break;
+                default: modifier = 'question-sign';
             }
-       } else {
+        } else {
             ftype = ftype.replace(/^ipf\./, '');
             switch(ftype) {
-                case 'appointment':
-                    modifier = 'th';
-                    break;
-                case 'deleted items':
-                    modifier = 'trash';
-                    break;
-                case 'contact':
-                    modifier = 'user';
-                    break;
-                case 'task':
-                    modifier = 'th-list';
-                    break;
-                case 'configuration':
-                    modifier = 'cog';
-                    break;
-                case 'note':
-                    modifier = 'tag';
-                    break;
-                case 'note.outlookhomepage':
-                    modifier = 'tag';
-                    break;
-                case 'stickynote':
-                    modifier = 'tags';
-                    break;
-                case 'journal':
-                    modifier = 'book';
-                    break;
-                default:
-                    modifier = 'question-sign';
+                case 'appointment': modifier = 'th'; break;
+                case 'deleted items': modifier = 'trash'; break;
+                case 'contact': modifier = 'user'; break;
+                case 'task': modifier = 'th-list'; break;
+                case 'configuration': modifier = 'cog'; break;
+                case 'note': modifier = 'tag'; break;
+                case 'note.outlookhomepage': modifier = 'tag'; break;
+                case 'stickynote': modifier = 'tags'; break;
+                case 'journal': modifier = 'book'; break;
+                default: modifier = 'question-sign';
             }
-       }
+        }
+//        console.log('FolderController: glyphicon(name='+name+',ftype='+ftype+') => '+modifier);
         return 'glyphicon-'+modifier;
-   }.property('name','ftype')
+    }.property('name','ftype')
+});
+
+App.ItemsController = Ember.ArrayController.extend({
+    sortAscending: true,
+    sortProperties: ['name'],
+    itemController: 'item'
+});
+
+App.ItemController = Ember.ObjectController.extend({
 });
 
 App.KeysController = Ember.ArrayController.extend({
+//    filter: 'PR_',
     sortAscending: true,
-    sortProperties: ['name'],
-    filteredContent: function() {
-        var content = this.get('content');
-        if (!content) { return content; }
-        return content.filter( function(item) {
-            return (item.get('name').substr(0,3) === 'PR_');
-        });
-    }.property('content.isLoaded')
+    sortProperties: ['name']
+//    filteredContent: function() {
+//        var filter = this.get('filter');
+//        var keys = this.get('arrangedContent');
+//        if (!keys) {
+//            return keys;
+//        }
+//        return keys.filter( function(k) {
+//            var name = k.get('name'),
+//                value = k.get('value'),
+//                len = filter.length,
+//                ok = (name.substr(0,len) === filter && value);
+//                if (ok) {
+//                    name = name.substr(len);
+//                    k.set('name', name);
+//                }
+//            console.log('KeysController: filterContent(name='+name+',value='+value+') => '+ok);
+//            return ok;
+//        });
+//    }.property('arrangedContent', 'filter')
 });
 
 /** MODELS **/

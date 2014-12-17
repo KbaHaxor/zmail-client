@@ -72,7 +72,7 @@
                 <h1>Keys :: {{length}}</h1>
                 <div class="list-group">
                     {{#if length}}
-                        {{#each filteredContent}}
+                        {{#each}}
                             <li class="list-group-item keys-header">{{formatvalue name maxlen=50}}</li>
                             <li class="list-group-item">{{formatvalue value maxlen=50}}</li>
                         {{/each}}

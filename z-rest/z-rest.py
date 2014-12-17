@@ -135,32 +135,32 @@ def get_flag(item):
     else:
       return 'unknown (' + str(val) + ')'
 
+def get_folder_type(folder):
+    try:
+        folder_type = folder.prop(PR_CONTAINER_CLASS).value
+    except MAPIErrorNotFound:
+        folder_type = 'None'
+#        print container_class
+    return folder_type
+
 @app.route('/folders', methods=['GET', 'OPTIONS'])
 @crossdomain(origin='*')
 @requires_auth
 def folders():
     folderlist = []
-    cnt = 0
+#    cnt = 0
     for folder in user.store.folders():
-        cnt = cnt + 1
-        print cnt, folder.name
-        try:
-            container_class = folder.prop(PR_CONTAINER_CLASS).value
-        except MAPIErrorNotFound:
-            container_class = 'None'
-        print container_class
+#        cnt = cnt + 1
+#        print cnt, folder.name
         folderlist.append({
             'id': folder.entryid,
             'name': folder.name,
-            'ftype' : container_class,
+            'ftype' : get_folder_type(folder),
             'count': folder.count,
             'links': {'items': '/folder/'+folder.entryid+'/items'}
         })
         print "after append"
-    print "before jsonify"
-    res = jsonify({'folders': folderlist})
-    print "after jsonify"
-    return res
+    return jsonify({'folders': folderlist})
     # TODO: hierachy
     # return jsonify({folder.name: folder.entryid for folder in user.store.folders()})
 
