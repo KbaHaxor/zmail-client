@@ -13,6 +13,7 @@
     <script src="js/libs/ember-data-1.0-beta-11.js"></script>
 
     <script src="js/libs/base64.js"></script>
+    <script src="js/libs/cycle.js"></script>
     <script src="js/app.js"></script>
 
     <script type="text/x-handlebars" data-template-name="application">
@@ -52,7 +53,7 @@
                 <div class="list-group">
                     {{#each}}
                         {{#link-to 'item' this class="list-group-item"}}
-                            {{name}} <span class="badge">{{count}}</span>
+                            {{formatvalue name maxlen=50}} <span class="badge">{{count}}</span>
                         {{/link-to}}
                     {{else}}
                         <li class="list-group-item">No items</li>
