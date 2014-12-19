@@ -185,8 +185,7 @@ def folder(foldername):
             'name': item.subject,
             'folder': folder.entryid,
             'count': len(item.props()),
-#            'subject': item.subject,
-#            'received': str(item.received),
+            'received': str(item.received),
             'links': {'keys': '/folder/'+folder.entryid+'/item/'+item.entryid}
         })
         x = x + 1

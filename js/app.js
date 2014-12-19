@@ -102,8 +102,8 @@ App.FoldersRoute = Ember.Route.extend({
 
 App.FoldersIndexRoute = Ember.Route.extend({
     afterModel: function() {
-        var firstObject = this.modelFor('folders').get('firstObject');
-//        var firstObject = this.controllerFor('folders').get('arrangedContent.firstObject');
+        // On startup we first go to the inbox by default.
+        var firstObject = this.modelFor('folders').findBy('name','Inbox');
         if (firstObject) {
             console.log('FoldersIndexRoute: afterModel => folder/firstObject');
             this.transitionTo('folder', firstObject);
@@ -130,7 +130,6 @@ App.FolderIndexRoute = Ember.Route.extend({
 App.ItemsRoute = Ember.Route.extend({
     model: function() {
         console.log('ItemsRoute: model()');
-//        console.table(App.__container__.lookup('store:main').typeMapFor(App.Item).records);
         return this.modelFor('folder').get('items');
     }
 });
@@ -158,7 +157,6 @@ App.ItemIndexRoute = Ember.Route.extend({
 App.KeysRoute = Ember.Route.extend({
     model: function() {
         console.log('KeysRoute: model()');
-//        console.table(App.__container__.lookup('store:main').typeMapFor(App.Item));
         return this.modelFor('item').get('keys');
     }
 
@@ -166,8 +164,8 @@ App.KeysRoute = Ember.Route.extend({
 
 /** CONTROLLERS **/
 App.FoldersController = Ember.ArrayController.extend({
-    //sortAscending: true,
-    //sortProperties: ['name'],
+    sortAscending: true,
+    sortProperties: ['name'],
     itemController: 'folder'
 });
 
@@ -205,37 +203,48 @@ App.FolderController = Ember.ObjectController.extend({
 });
 
 App.ItemsController = Ember.ArrayController.extend({
-    //sortAscending: true,
-    //sortProperties: ['name'],
-    itemController: 'item'
-});
-
-App.ItemController = Ember.ObjectController.extend({
+    sortAscending: false,
+    sortProperties: ['received']
 });
 
 App.KeysController = Ember.ArrayController.extend({
-//    filter: 'PR_',
     sortAscending: true,
     sortProperties: ['name'],
-//    filteredContent: function() {
-//        var filter = this.get('filter');
-//        var keys = this.get('arrangedContent');
-//        if (!keys) {
-//            return keys;
-//        }
-//        return keys.filter( function(k) {
-//            var name = k.get('name'),
-//                value = k.get('value'),
-//                len = filter.length,
-//                ok = (name.substr(0,len) === filter && value);
-//                if (ok) {
-//                    name = name.substr(len);
-//                    k.set('name', name);
-//                }
-////            console.log('KeysController: filterContent(name='+name+',value='+value+') => '+ok);
-//            return ok;
-//        });
-//    }.property('arrangedContent', 'filter')
+
+    queryParams: ['filterOn'],
+    filterOn: false,
+
+    filterRe: '^PR_',
+
+    filterOnObserver: function() {
+        var filterOn = this.get('filterOn');
+        console.log('KeysController: filterOn='+filterOn);
+    }.observes('filterOn')
+
+    //filteredContent: function() {
+    //    var filter = this.get('filter');
+    //    var filterProperties = this.get('filterProperties');
+    //    var keys = this.get('model');
+    //    if (!keys || !filterProperties) {
+    //        console.log('KeysController: filteredContent() => do nothing');
+    //        return keys;
+    //    }
+    //    console.log('KeysController: filteredContent() => do something');
+    //    return keys;
+    //    console.log('KeysController: filteredContent() => filter contents');
+    //    return keys.filter( function(k) {
+    //        var name = k.get('name'),
+    //            value = k.get('value'),
+    //            len = filter.length,
+    //            ok = (name.substr(0,len) === filter && value);
+    //            if (ok) {
+    //                name = name.substr(len);
+    //                k.set('name', name);
+    //            }
+    //        //console.log('KeysController: filterContent(name='+name+') => '+ok);
+    //        return ok;
+    //    });
+    //}.property('filter', 'content', 'filterProperties')
 });
 
 /** MODELS **/
@@ -248,6 +257,7 @@ App.Folder = DS.Model.extend({
 
 App.Item = DS.Model.extend({
     name: DS.attr('string'),
+    received: DS.attr('date'),
     folder: DS.belongsTo('folder', {async: true} ),
     count: DS.attr('number'),
     keys: DS.hasMany('key', {async: true} )
@@ -286,6 +296,7 @@ Ember.Handlebars.helper('prefixstrip', function(value, options) {
 });
 
 /** FIXTURES **/
+/*
 App.Folder.reopenClass({
   FIXTURES: [
     { id: 1, name: 'Sent items', ftype: 'none',            count: 3, items: [51, 52] },
@@ -298,17 +309,18 @@ App.Folder.reopenClass({
 
 App.Item.reopenClass({
   FIXTURES: [
-    { id: 51, name: 'Fifty-one',   folder: 1, count: 2, keys: [101, 102] },
-    { id: 52, name: 'Fifty-two',   folder: 1, count: 0, keys: [] },
-    { id: 53, name: 'Fifty-three', folder: 2, count: 1, keys: [103] },
-    { id: 54, name: 'Fifty-four',  folder: 2, count: 1, keys: [104] },
-    { id: 55, name: 'Fifty-five',  folder: 2, count: 1, keys: [105] },
-    { id: 56, name: 'Fifty-six',   folder: 2, count: 3, keys: [106, 107, 108] },
-    { id: 57, name: 'Fifty-seven', folder: 3, count: 0, keys: [] },
-    { id: 58, name: 'Fifty-eight', folder: 5, count: 2, keys: [109, 110] },
-    { id: 59, name: 'Fifty-nine',  folder: 5, count: 1, keys: [111] }
+    { id: 51, name: 'Fifty-one',   received: new Date(), folder: 1, count: 2, keys: [101, 102] },
+    { id: 52, name: 'Fifty-two',   received: new Date(), folder: 1, count: 0, keys: [] },
+    { id: 53, name: 'Fifty-three', received: new Date(), folder: 2, count: 1, keys: [103] },
+    { id: 54, name: 'Fifty-four',  received: new Date(), folder: 2, count: 1, keys: [104] },
+    { id: 55, name: 'Fifty-five',  received: new Date(), folder: 2, count: 1, keys: [105] },
+    { id: 56, name: 'Fifty-six',   received: new Date(), folder: 2, count: 3, keys: [106, 107, 108] },
+    { id: 57, name: 'Fifty-seven', received: new Date(), folder: 3, count: 0, keys: [] },
+    { id: 58, name: 'Fifty-eight', received: new Date(), folder: 5, count: 2, keys: [109, 110] },
+    { id: 59, name: 'Fifty-nine',  received: new Date(), folder: 5, count: 1, keys: [111] }
   ]
 });
+*/
 
 App.Key.reopenClass({
   FIXTURES: [
@@ -326,11 +338,12 @@ App.Key.reopenClass({
   ]
 });
 
-/** HANDLEBAR HELPERS **/
+/** HANDLEBARS HELPERS **/
 Ember.Handlebars.helper('formatvalue', function(value, options) {
     if (value) {
         var maxlen = options.hash.maxlen || 50;
-        if (/\s/g.test(value)) {
+        var force = options.hash.force;
+        if (!force && /\s/g.test(value)) {
             return value;
         } else if (value.length > maxlen) {
             return value.substring(0,maxlen-4) + '...';
@@ -340,6 +353,10 @@ Ember.Handlebars.helper('formatvalue', function(value, options) {
     } else {
         return 'null';
     }
+});
+
+Ember.Handlebars.helper('formatdate', function(value, options) {
+    return moment(value).format('YYYY MMM DD hh:mm')
 });
 
 Ember.Handlebars.helper('prefixstrip', function(value, options) {
