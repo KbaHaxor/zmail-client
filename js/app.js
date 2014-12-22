@@ -14,8 +14,8 @@ App = Ember.Application.create({
 App.ApplicationAdapter = DS.RESTAdapter.extend({});
 
 DS.RESTAdapter.reopen({
-//    host: 'http://0.0.0.0:5000'
-    host: 'http://192.168.2.9:5000'
+    host: 'http://0.0.0.0:5000'
+//    host: 'http://192.168.2.9:5000'
 });
 
 App.FoldersAdapter = DS.RESTAdapter.extend({
@@ -320,7 +320,6 @@ App.Item.reopenClass({
     { id: 59, name: 'Fifty-nine',  received: new Date(), folder: 5, count: 1, keys: [111] }
   ]
 });
-*/
 
 App.Key.reopenClass({
   FIXTURES: [
@@ -337,6 +336,7 @@ App.Key.reopenClass({
     { id: 111, name: 'Hundred-eleven', value: 'An apple a day is healthy',    item: 59 }
   ]
 });
+*/
 
 /** HANDLEBARS HELPERS **/
 Ember.Handlebars.helper('formatvalue', function(value, options) {

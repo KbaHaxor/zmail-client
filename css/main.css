@@ -188,3 +188,7 @@ div.loginBox h1 {
     background-color: lightgray;
     color: black;
 }
+
+li.list-group-item nav ul.pagination {
+    margin: 0px;
+}
