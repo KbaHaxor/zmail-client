@@ -62,7 +62,7 @@ App.KeysAdapter = DS.RESTAdapter.extend({
 App.FolderSerializer = DS.RESTSerializer.extend({
     typeForRoot: function(root) {
         var res = this._super(root);
-        console.log('FolderSerializer: typeForRoot(root='+root+') => '+res);
+//        console.log('FolderSerializer: typeForRoot(root='+root+') => '+res);
         return res;
     },
     normalize: function(type, hash, prop) {
@@ -103,7 +103,7 @@ App.FoldersRoute = Ember.Route.extend({
 App.FoldersIndexRoute = Ember.Route.extend({
     afterModel: function() {
         // On startup we first go to the inbox by default.
-        var firstObject = this.modelFor('folders').findBy('name','Inbox');
+        var firstObject = this.modelFor('folders').findBy('name','Inbox'); // TODO: make configurable
         if (firstObject) {
             console.log('FoldersIndexRoute: afterModel => folder/firstObject');
             this.transitionTo('folder', firstObject);
@@ -202,9 +202,65 @@ App.FolderController = Ember.ObjectController.extend({
     }.property('name','ftype')
 });
 
+// Helper computed property used by nextPage
+// and previousPage.
+var incrementPage = function(amt) {
+    return Ember.computed('page', 'numPages', function() {
+        var newPage = parseInt(this.get('page'), 10) + amt;
+        if (newPage <= parseInt(this.get('numPages'), 10) && newPage >= 1) {
+            return newPage;
+        }
+    });
+};
+
 App.ItemsController = Ember.ArrayController.extend({
+    queryParams: ['page', 'pageSize', 'sortAscending', 'sortProperties'],
+    page: 1,
+    pageSize: 10, // TODO: Make configurable
     sortAscending: false,
-    sortProperties: ['received']
+    sortProperties: ['received'],
+
+    pages: function() {
+        var pageSize = this.get('pageSize'),
+            l = this.get('model.length'),
+            pages = Math.ceil(l / pageSize),
+            pagesArray = [];
+
+        for (var i = 0; i < pages; i++) {
+            pagesArray.push(i + 1);
+        }
+        return pagesArray;
+    }.property('pageSize', 'model.length'),
+
+    numPages: function() {
+        var pageSize = this.get('pageSize'),
+            l = this.get('model.length');
+            return Math.ceil(l / pageSize);
+    }.property('pageSize'),
+
+    paged: function() {
+        var page = this.get('page') - 1,
+            pageSize = this.get('pageSize'),
+            start = page * pageSize,
+            end = start + pageSize;
+        return this.get('arrangedContent').slice(start, end);
+    }.property('page', 'arrangedContent', 'pageSize'),
+
+    previousPage: incrementPage(-1),
+    nextPage:     incrementPage(1),
+
+    // We don't want updates to the newPageSize
+    // input field to immediately update `pageSize`
+    // (and therefore the URL), so we make this
+    // binding read-only (and later explicitly
+    // write `pageSize` inside the `updatePageSize`)
+    newPageSize: Ember.computed.oneWay('pageSize'),
+
+    actions: {
+        updatePageSize: function() {
+            this.set('pageSize', parseInt(this.get('newPageSize'), 10));
+        }
+    }
 });
 
 App.KeysController = Ember.ArrayController.extend({

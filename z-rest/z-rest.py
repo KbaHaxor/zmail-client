@@ -178,7 +178,7 @@ def folder(foldername):
         return jsonify({'error': 'Folder does not exist'})
     x = 0
     for item in folder.items():
-        if x == 10:
+        if x == 100:
             break
         itemlist.append({
             'id': item.entryid,
