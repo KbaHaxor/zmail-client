@@ -76,7 +76,7 @@ $ curl "http://192.168.50.11:5000/folders/000000004643FC50C0F14E8E855510C59A1492
     },
     {
       "id": "000000004643FC50C0F14E8E855510C59A1492820100000005000000905FDC170269407FAF...",
-      "subject": "Ihre Reservierung PM8042971 bei hotel.de f\u00fcr Hotel-Restaurant Hirsch (30.07.2012-03.08.2012)"
+      "subject": "Ihre Reservierung PM8042971 bei hotel.de f\u00fcr Hotel-Restaurant Hi..."
     }
   ]
 }
